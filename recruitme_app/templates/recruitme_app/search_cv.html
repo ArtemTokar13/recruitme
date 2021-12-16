@@ -1,0 +1,21 @@
+{% if user.is_authenticated  %}
+
+    {% if user.user_type == 'HJ' %}
+
+        <a href="{% url 'home' %}">Home</a>
+
+        <form method='GET' action="{% url 'search_cv' %}">
+            <input type='text' name='search_cv' value='{{ request.GET.search_cv }}'>
+            <input class="button" type='submit' value="Search CV">
+        </form>
+
+<!--        {% for result in results %}-->
+<!--            <a href="{% url 'job_detail' result.pk %}">{{ result.offer_name }}</a>-->
+<!--            {{ result.description }}-->
+<!--        {% empty %}-->
+<!--            <h3>No results found</h3>-->
+<!--        {% endfor %}-->
+
+    {% endif %}
+
+{% endif %}

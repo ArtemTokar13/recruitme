@@ -1,0 +1,25 @@
+{% load crispy_forms_tags %}
+
+<a href="{% url 'home' %}">Home</a>
+
+{% if user.is_authenticated  %}
+
+<p><h1>Hello {{ user.first_name }}!</h1></p>
+
+<h1>Add or change your profile data</h1>
+
+        {% for skill in skills %}
+
+        <p>{{ skill }}</p>
+
+        {% endfor %}
+
+<a href="{% url 'skills' %}">Manage skills</a>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ worker_form|crispy }}
+    <button type="submit">Save</button>
+</form>
+
+{% endif %}

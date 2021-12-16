@@ -1,0 +1,21 @@
+{% load crispy_forms_tags %}
+
+<a href="{% url 'home' %}">Home</a>
+
+{% if user.is_authenticated  %}
+
+    {% if user.user_type == 'HJ' %}
+
+        <h2>Hello {{ user.company_name }}!</h2>
+
+        <h2>Add new job</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ job_form|crispy }}
+            <button type="submit">Create position</button>
+        </form>
+
+    {% endif %}
+
+{% endif %}

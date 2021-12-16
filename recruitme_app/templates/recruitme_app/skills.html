@@ -1,0 +1,21 @@
+{% load crispy_forms_tags %}
+
+<a href="{% url 'home' %}">Home</a>
+
+{% if user.is_authenticated  %}
+
+        {% for skill in skills %}
+
+        <p>{{ skill }}<a href="{% url 'delete_skill' skill.tagname %}">-</a></p>
+
+        {% endfor %}
+
+        <h1>Add or remove skill</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ skills_form|crispy }}
+            <button type="submit">+</button>
+        </form>
+
+{% endif %}

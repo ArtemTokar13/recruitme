@@ -1,0 +1,21 @@
+{% if user.is_authenticated  %}
+
+    {% if user.user_type == 'OJ' %}
+
+        <a href="{% url 'home' %}">Home</a>
+
+        <form method='GET' action="{% url 'search_job' %}">
+            <input type='text' name='search_job' value='{{ request.GET.search_job }}'>
+            <input class="button" type='submit' value="Search job">
+        </form>
+
+        {% for result in results %}
+            <a href="{% url 'job_detail' result.pk %}">{{ result.offer_name }}</a>
+            {{ result.description }}
+        {% empty %}
+            <h3>No results found</h3>
+        {% endfor %}
+
+    {% endif %}
+
+{% endif %}

@@ -1,0 +1,82 @@
+{% load crispy_forms_tags %}
+
+{% if user.is_authenticated  %}
+
+    <a href="{% url 'home' %}">Home</a>
+
+    {% if user.user_type == 'OJ' %}
+
+        <p>{{ job.employername }}</p>
+        <p>{{ job.offer_name }}</p>
+
+        <h3>Requirements:</h3>
+
+        {% for r in requirements %}
+
+            <p>{{ r.rname }}</p>
+
+        {% endfor %}
+
+        <h3>Your skills:</h3>
+
+        {% for s in skills %}
+
+            <p>{{ s.tagname }}</p>
+
+        {% endfor %}
+
+        <p>Your skills meet the requirements by {{ match }}%</p>
+
+        {% if message %}
+
+            {{ message }}
+
+        {% else %}
+
+            <form method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ apply_form|crispy }}
+                <button type="submit">Apply</button>
+            </form>
+
+        {% endif %}
+
+    {% else %}
+
+        <p>{{ job.offer_name }}</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ job_registration_form|crispy }}
+            <button type="submit">Save</button>
+        </form>
+
+        <h2>Requirements:</h2>
+
+        {% for r in requirements %}
+
+            <p>{{ r.rname }}</p>
+
+        {% endfor %}
+
+        <a href="{% url 'requirements' job.id %}">Manage requirements</a>
+
+        <h2>Applications</h2>
+
+        {% for apply in applies %}
+
+            <ul>
+                <li>{{ apply.worker }}</li>
+                <li>{{ apply.apply_date }}</li>
+            </ul>
+
+            <a href="{% url 'application' apply.id %}" target="popup"></a>
+            <form method="POST" action="{% url 'application' apply.id %}" target="popup">{% csrf_token %}
+                <input type="submit" value="View apply" />
+            </form>
+
+        {% endfor %}
+
+    {% endif %}
+
+{% endif %}

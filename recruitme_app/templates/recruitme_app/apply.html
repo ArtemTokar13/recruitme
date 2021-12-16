@@ -1,0 +1,28 @@
+{% load crispy_forms_tags %}
+
+{% if user.is_authenticated  %}
+
+{{ error }}
+
+
+        <ul>
+            <li>{{ application.worker }}</li>
+            <li><a href="{{ application.resume.url }}" target="popup">{{ application.resume }}</a></li>
+            <li>{{ application.coverletter }}</li>
+            <li>{{ application.apply_date }}</li>
+        </ul>
+
+        <ul>
+            <li>{{ application.employer_comment }}</li>
+            <li>{{ application.state }}</li>
+            <li>{{ application.read_date }}</li>
+        </ul>
+
+        <form method="POST" action="{% url 'response' application.id %}">
+            {% csrf_token %}
+            {{ response_form|crispy }}
+            <button type="submit">Response</button>
+        </form>
+
+
+{% endif %}

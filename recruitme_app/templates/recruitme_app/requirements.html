@@ -1,0 +1,23 @@
+{% load crispy_forms_tags %}
+
+<a href="{% url 'home' %}">Home</a>
+
+{% if user.is_authenticated  %}
+
+
+
+    <h1>Add or remove requirements</h1>
+
+    {% for r in requirements %}
+
+        <p>{{ r.rname }}<a href="{% url 'delete_requirement' job.id r.rname %}">-</a></p>
+
+    {% endfor %}
+
+    <form method="POST">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type="submit">+</button>
+    </form>
+
+{% endif %}
