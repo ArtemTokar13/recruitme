@@ -4,18 +4,20 @@
 
 {% if user.is_authenticated  %}
 
-        {% for skill in skills %}
+    <h2>{{ message }}</h2>
+
+    <h1>Add or remove skill</h1>
+
+    {% for skill in skills %}
 
         <p>{{ skill }}<a href="{% url 'delete_skill' skill.tagname %}">-</a></p>
 
-        {% endfor %}
+    {% endfor %}
 
-        <h1>Add or remove skill</h1>
-
-        <form method="POST">
-            {% csrf_token %}
-            {{ skills_form|crispy }}
-            <button type="submit">+</button>
-        </form>
+    <form method="POST">
+        {% csrf_token %}
+        {{ skills_form|crispy }}
+        <button type="submit">+</button>
+    </form>
 
 {% endif %}

@@ -96,15 +96,12 @@ class SkillsRegistrationView(View):
     def post(self, request):
         form = SkillsForm(request.POST)
         if form.is_valid():
-            if SkillTag.objects.filter(tagname=request.POST.get('tagname')).exists():
-                if not SkillTag.objects.filter(owner=request.user).exists():
-                    skill = get_object_or_404(SkillTag, tagname=request.POST.get('tagname'))
-                    skill.owner.add(request.user)
-                    return redirect('skills')
-                skill = form.save()
-                skill.owner.add(request.user)
+            if not SkillTag.objects.filter(tagname=request.POST.get('tagname')).exists():
+                form.save()
+            tag = get_object_or_404(SkillTag, tagname=request.POST.get('tagname'))
+            tag.owner.add(request.user)
             return redirect('skills')
-        return render(request=request, template_name='recruitme_app/skills.html', context={'skills_form': form})
+        return render(request=request, template_name='recruitme_app/skills.html', context={'skills_form': form, 'message': 'Enter correct data please'})
 
 
 class JobRegistrationView(View):
@@ -140,15 +137,12 @@ class RequirementsRegistrationView(View):
         form = RequirementsForm(request.POST)
         job = get_object_or_404(JobProfile, id=id)
         if form.is_valid():
-            if Requirements.objects.filter(rname=request.POST.get('rname')).exists():
-                if not Requirements.objects.filter(job=job).exists():
-                    requirement = get_object_or_404(Requirements, rname=request.POST.get('rname'))
-                    requirement.job.add(job)
-                    return redirect(request.META.get('HTTP_REFERER'))
-                requirement = form.save()
-                requirement.job.add(job)
-                return redirect(request.META.get('HTTP_REFERER'))
-        return render(request=request, template_name='recruitme_app/requirements.html', context={'form': form})
+            if not Requirements.objects.filter(rname=request.POST.get('rname')).exists():
+                form.save()
+            requirement = get_object_or_404(Requirements, rname=request.POST.get('rname'))
+            requirement.job.add(job)
+            return redirect(request.META.get('HTTP_REFERER'))
+        return render(request=request, template_name='recruitme_app/requirements.html', context={'form': form, 'message': 'Enter correct data please'})
 
 
 class JobListView(View):
@@ -203,12 +197,14 @@ class JobDetail(View):
         job = get_object_or_404(JobProfile, id=id)
         requirements = Requirements.objects.filter(job=job)
         skills = SkillTag.objects.filter(owner=request.user)
-        matches_qset = set()
-        for skill in skills:
-            for requirement in requirements:
-                if str(skill) == str(requirement):
-                    matches_qset.add(skill)
-        match = (len(matches_qset) / len(requirements)) * 100
+        match = 100
+        if len(requirements) > 0:
+            matches_qset = set()
+            for skill in skills:
+                for requirement in requirements:
+                    if str(skill) == str(requirement):
+                        matches_qset.add(skill)
+            match = (len(matches_qset) / len(requirements)) * 100
         if Apply.objects.filter(worker=request.user, job=id):
             return render(request, 'recruitme_app/job_detail.html',
                           context={'job': job,
@@ -250,8 +246,9 @@ class JobDetail(View):
 
 
 def apply_view(request, id):
-    application = Apply.objects.filter(id=id)
-    application.update(read=True, read_date=timezone.now())
+    application = get_object_or_404(Apply, id=id)
+    application.read = True
+    application.read_date = timezone.now()
     response_form = ResponseForm()
     return render(request, 'recruitme_app/apply.html',
                   {'application': application, 'response_form': response_form})
@@ -265,7 +262,10 @@ def response(request, id):
         application.update(state=request.POST.get('state'), employer_comment=request.POST.get('employer_comment'),
                            read_date=timezone.now())
     else:
-        return render(request, 'recruitme_app/apply.html', {'error': 'You have to write a comment'})
+        print('here')
+        return render(request, 'recruitme_app/apply.html',
+                      {'error': 'You have to write a comment'})
+        # return redirect(request.META.get('HTTP_REFERER'))#render(request, 'recruitme_app/apply.html', {'error': 'You have to write a comment'})
     return redirect(request.META.get('HTTP_REFERER'))
 
 

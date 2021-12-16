@@ -70,10 +70,7 @@
                 <li>{{ apply.apply_date }}</li>
             </ul>
 
-            <a href="{% url 'application' apply.id %}" target="popup"></a>
-            <form method="POST" action="{% url 'application' apply.id %}" target="popup">{% csrf_token %}
-                <input type="submit" value="View apply" />
-            </form>
+            <a href="{% url 'application' apply.id %}" target="blank">View apply</a>
 
         {% endfor %}
 
