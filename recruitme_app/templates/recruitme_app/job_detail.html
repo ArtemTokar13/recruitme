@@ -27,6 +27,16 @@
 
         <p>Your skills meet the requirements by {{ match }}%</p>
 
+        <h3>Your progress:</h3>
+
+        {% for apply in applies %}
+
+            <p>{{ apply.state }}</p>
+            <p>{{ apply.employer_comment }}</p>
+            <p>{{ apply.read_date }}</p>
+
+        {% endfor %}
+
         {% if message %}
 
             {{ message }}
